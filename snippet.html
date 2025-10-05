@@ -17,21 +17,22 @@
       border-radius: 5px;
       font-family: monospace;
       margin: 1em 0;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    .copy-btn {
+    .snippet-container:hover {
+      background: #3a3a3a;
+    }
+    .snippet-container.copied::after {
+      content: "Copied!";
       position: absolute;
       top: 8px;
-      right: 8px;
-      background: #444;
-      color: #fff;
-      border: none;
-      padding: 5px 10px;
+      right: 12px;
+      background: #28a745;
+      color: white;
+      padding: 2px 6px;
       border-radius: 3px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-    .copy-btn:active {
-      background: #666;
+      font-size: 0.8em;
     }
     .add-form {
       margin-bottom: 20px;
@@ -68,10 +69,8 @@
       snippets.forEach((code, index) => {
         const snippetEl = document.createElement("div");
         snippetEl.className = "snippet-container";
-        snippetEl.innerHTML = `
-          <button class="copy-btn" onclick="copySnippet(this, ${index})">Copy</button>
-          <pre><code>${code}</code></pre>
-        `;
+        snippetEl.innerHTML = `<pre><code>${code}</code></pre>`;
+        snippetEl.onclick = () => copySnippet(snippetEl, index);
         container.appendChild(snippetEl);
       });
     }
@@ -86,11 +85,11 @@
       renderSnippets();
     }
 
-    function copySnippet(button, index) {
+    function copySnippet(snippetEl, index) {
       const code = snippets[index];
       navigator.clipboard.writeText(code).then(() => {
-        button.innerText = "Copied!";
-        setTimeout(() => button.innerText = "Copy", 2000);
+        snippetEl.classList.add("copied");
+        setTimeout(() => snippetEl.classList.remove("copied"), 2000);
       });
     }
 
@@ -100,4 +99,3 @@
 
 </body>
 </html>
-
