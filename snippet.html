@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Snippet Manager</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background: #f4f4f4;
+    }
+    .snippet-container {
+      position: relative;
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1em;
+      border-radius: 5px;
+      font-family: monospace;
+      margin: 1em 0;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #444;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .copy-btn:active {
+      background: #666;
+    }
+    .add-form {
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 60px;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 8px;
+      padding: 6px 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Snippet Manager</h2>
+  <div class="add-form">
+    <textarea id="new-snippet" placeholder="Write your snippet here..."></textarea>
+    <br>
+    <button onclick="addSnippet()">Add Snippet</button>
+  </div>
+
+  <div id="snippets"></div>
+
+  <script>
+    // Load snippets from localStorage
+    let snippets = JSON.parse(localStorage.getItem("snippets")) || [];
+
+    function renderSnippets() {
+      const container = document.getElementById("snippets");
+      container.innerHTML = "";
+      snippets.forEach((code, index) => {
+        const snippetEl = document.createElement("div");
+        snippetEl.className = "snippet-container";
+        snippetEl.innerHTML = `
+          <button class="copy-btn" onclick="copySnippet(this, ${index})">Copy</button>
+          <pre><code>${code}</code></pre>
+        `;
+        container.appendChild(snippetEl);
+      });
+    }
+
+    function addSnippet() {
+      const textarea = document.getElementById("new-snippet");
+      const code = textarea.value.trim();
+      if (!code) return;
+      snippets.push(code);
+      localStorage.setItem("snippets", JSON.stringify(snippets));
+      textarea.value = "";
+      renderSnippets();
+    }
+
+    function copySnippet(button, index) {
+      const code = snippets[index];
+      navigator.clipboard.writeText(code).then(() => {
+        button.innerText = "Copied!";
+        setTimeout(() => button.innerText = "Copy", 2000);
+      });
+    }
+
+    // Initial render
+    renderSnippets();
+  </script>
+
+</body>
+</html>
+
